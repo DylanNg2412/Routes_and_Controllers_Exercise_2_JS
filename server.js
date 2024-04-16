@@ -26,31 +26,35 @@ let reservations = [
 
 // Your routing, authentication, and controller code goes here
 app.get("/parks", (request, response) => {
-  response.json(parks);
+  response.status(200).json(parks);
 });
 
 app.get("/visitors", (request, response) => {
-  response.json(visitors);
+  response.status(200).json(visitors);
 });
 
 app.get("/reservations", (request, response) => {
-  response.json(reservations);
+  response.status(200).json(reservations);
 });
 
 app.get("/visitors/:id", (request, response) => {
   const selectedVisitor = visitors.find((i) => i.id == request.params.id);
-  const pastReservation = reservations.filter(
-    (i) => i.id == selectedVisitor.pastReservations
-  );
-  const upcomingReservation = reservations.filter(
-    (i) => i.id == selectedVisitor.upcomingReservations
-  );
-  response.json({
-    id: selectedVisitor.id,
-    name: selectedVisitor.name,
-    pastReservations: pastReservation,
-    upcomingReservations: upcomingReservation,
-  });
+  if (selectedVisitor) {
+    const pastReservation = reservations.filter(
+      (i) => i.id == selectedVisitor.pastReservations
+    );
+    const upcomingReservation = reservations.filter(
+      (i) => i.id == selectedVisitor.upcomingReservations
+    );
+    response.json({
+      id: selectedVisitor.id,
+      name: selectedVisitor.name,
+      pastReservations: pastReservation,
+      upcomingReservations: upcomingReservation,
+    });
+  } else {
+    response.status(404).json("Visitor not found");
+  }
 });
 
 app.listen(3000, () => {
